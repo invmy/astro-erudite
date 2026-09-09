@@ -10,6 +10,7 @@ import { calloutDirective } from "./src/lib/callout"
 import { externalLinks } from "./src/lib/external-links"
 import { headingNamespace } from "./src/lib/heading-namespace"
 import { headingAnchors } from "./src/lib/heading-anchors"
+import { admonitionsToDirectives } from "@nullpinter/satteri-admonitions-to-directives"
 
 export default defineConfig({
   site: "https://astro-erudite.vercel.app",
@@ -27,7 +28,7 @@ export default defineConfig({
     syntaxHighlight: false,
     processor: satteri({
       features: { directive: true, math: true },
-      mdastPlugins: [calloutDirective, inlineExpressiveCode, temmlMath],
+      mdastPlugins: [admonitionsToDirectives(),calloutDirective, inlineExpressiveCode, temmlMath],
       hastPlugins: [
         externalLinks,
         blockExpressiveCode,
