@@ -6,12 +6,17 @@ import { getPosts } from "@/lib/content"
 
 export async function getStaticPaths() {
   const posts = await getPosts();
-  const categorySet = new Set();
+  const categorySet = new Set<string>();
 
   posts.forEach((post) => {
-    const cat = post.data?.category || post.category;
-    const name = typeof cat === 'object' ? cat.name : cat;
-    if (name) categorySet.add(name);
+    const cat = post.data?.category;
+    const name = Array.isArray(cat) 
+      ? cat[0]?.name 
+      : (typeof cat === 'object' && cat !== null ? cat.name : cat);
+      
+    if (typeof name === 'string' && name) {
+      categorySet.add(name);
+    }
   });
 
   const paths = Array.from(categorySet).map((name) => ({
@@ -31,8 +36,10 @@ const posts = await getPosts();
 const filteredPosts = !categoryName || categoryName === 'all'
   ? posts
   : posts.filter((post) => {
-      const cat = post.data?.category || post.category;
-      const name = typeof cat === 'object' ? cat.name : cat;
+      const cat = post.data?.category;
+      const name = Array.isArray(cat) 
+        ? cat[0]?.name 
+        : (typeof cat === 'object' && cat !== null ? cat.name : cat);
       return name === categoryName;
     });
 ---

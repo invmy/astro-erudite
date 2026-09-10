@@ -6,25 +6,34 @@ import { getPosts } from "@/lib/content";
 
 const posts = await getPosts();
 
-
-const categoryMap = new Map();
+const categoryMap = new Map<
+  string,
+  { id: string; name: string; count: number; latestPost: any }
+>();
 
 posts.forEach((post) => {
-  const cat = post.data?.category || post.category;
+  const cat = post.data?.category;
   if (!cat) return;
 
-  const catId = typeof cat === "object" ? cat.id : cat;
-  const catName = typeof cat === "object" ? cat.name : cat;
+  const catName = Array.isArray(cat)
+    ? cat[0]?.name
+    : typeof cat === "object" && cat !== null
+      ? cat.name
+      : cat;
+
+  if (!catName) return;
+  const catId = String(catName);
 
   if (!categoryMap.has(catId)) {
     categoryMap.set(catId, {
       id: catId,
-      name: catName,
+      name: String(catName),
       count: 1,
       latestPost: post,
     });
   } else {
-    categoryMap.get(catId).count += 1;
+    const existing = categoryMap.get(catId)!;
+    existing.count += 1;
   }
 });
 
@@ -32,7 +41,6 @@ const categories = Array.from(categoryMap.values()).map((cat) => ({
   ...cat,
   href: `/blog/${cat.name}`,
 }));
-
 
 categories.unshift({
   id: "all",

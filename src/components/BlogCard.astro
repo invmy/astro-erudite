@@ -16,6 +16,13 @@ const getFirstImage = (html?: string) => {
 };
 
 const coverImage = post.data.image || getFirstImage(post.rendered?.html);
+
+const cat = post.data?.category;
+const categoryName = Array.isArray(cat)
+  ? cat[0]?.name
+  : typeof cat === "object" && cat !== null
+    ? cat.name
+    : cat || "all";
 ---
 
 <li>
@@ -32,8 +39,7 @@ const coverImage = post.data.image || getFirstImage(post.rendered?.html);
     )
   }
   <entry-info>
-    <a href={`/blog/${post.data.category.name}/${post.id}`}>{post.data.title}</a
-    >
+    <a href={`/blog/${categoryName}/${post.id}`}>{post.data.title}</a>
     <entry-meta>
       {
         authors.length > 0 && (
@@ -72,7 +78,6 @@ const coverImage = post.data.image || getFirstImage(post.rendered?.html);
           </entry-tags>
         )
       }
-
     </entry-meta>
     <p>{post.data.description}</p>
   </entry-info>
